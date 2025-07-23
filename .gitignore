@@ -1,0 +1,11 @@
+# Python cache
+__pycache__/
+
+# CSV data files
+*.csv
+
+# Environment files
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
