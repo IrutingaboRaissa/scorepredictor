@@ -1,7 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'settings_page.dart';
 
 // Color constants for UI
 // Hunt Green theme only
@@ -44,6 +44,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+
   List<PredictionRecord> _history = [];
   bool _isLoading = true;
 
@@ -51,6 +52,111 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     _loadHistory();
+  }
+
+  Future<void> _deleteRecord(int index) async {
+    setState(() {
+      _history.removeAt(index);
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final historyJson = _history.map((r) => jsonEncode(r.toJson())).toList();
+    await prefs.setStringList('prediction_history', historyJson);
+  }
+
+  Future<void> _editRecord(int index) async {
+    final record = _history[index];
+    final inputControllers = List.generate(
+      record.inputs.length,
+      (i) => TextEditingController(text: record.inputs[i].toString()),
+    );
+    bool isLoading = false;
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: Text('Edit Prediction Factors'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...List.generate(inputControllers.length, (i) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: TextField(
+                        controller: inputControllers[i],
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: _getFeatureName(i),
+                        ),
+                      ),
+                    )),
+                    if (isLoading)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: CircularProgressIndicator(color: huntGreen),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final newInputsNullable = inputControllers
+                        .map((c) => double.tryParse(c.text.trim()))
+                        .toList();
+                    if (newInputsNullable.contains(null)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please enter valid numbers for all fields.')),
+                      );
+                      return;
+                    }
+                    final newInputs = newInputsNullable.cast<double>();
+                    setStateDialog(() => isLoading = true);
+                    // Call API to get new prediction
+                    double? newPredictionNullable;
+                    try {
+                      newPredictionNullable = await _getPredictionFromApi(newInputs);
+                    } catch (e) {
+                      newPredictionNullable = null;
+                    }
+                    setStateDialog(() => isLoading = false);
+                    if (newPredictionNullable != null) {
+                      final newPrediction = newPredictionNullable;
+                      setState(() {
+                        _history[index] = PredictionRecord(
+                          inputs: newInputs,
+                          prediction: newPrediction,
+                          timestamp: DateTime.now(),
+                        );
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      final historyJson = _history.map((r) => jsonEncode(r.toJson())).toList();
+                      await prefs.setStringList('prediction_history', historyJson);
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to get prediction. Please try again.')),
+                      );
+                    }
+                  },
+                  child: Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<double?> _getPredictionFromApi(List<double> inputs) async {
+    await Future.delayed(Duration(seconds: 1));
+    return inputs.reduce((a, b) => a + b) / inputs.length;
   }
 
   Future<void> _loadHistory() async {
@@ -89,17 +195,7 @@ class _HistoryPageState extends State<HistoryPage> {
         title: const Text('Prediction History'),
         centerTitle: true,
         backgroundColor: huntGreen,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Container(
         color: backgroundWhite,
@@ -120,7 +216,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           'No prediction history yet',
                           style: TextStyle(
                             fontSize: 18,
-                           color: huntGreen,
+                            color: huntGreen,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -159,7 +255,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
-                                       color: huntGreen,
+                                        color: huntGreen,
                                       ),
                                     ),
                                     Text(
@@ -169,6 +265,20 @@ class _HistoryPageState extends State<HistoryPage> {
                                         fontSize: 14,
                                       ),
                                     ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit, color: Colors.orange),
+                                          tooltip: 'Edit',
+                                          onPressed: () => _editRecord(index),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.delete, color: Colors.red),
+                                          tooltip: 'Delete',
+                                          onPressed: () => _deleteRecord(index),
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 const Divider(),
@@ -177,7 +287,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                   color: huntGreen,
+                                    color: huntGreen,
                                   ),
                                 ),
                                 const SizedBox(height: 8),

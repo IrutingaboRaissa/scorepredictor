@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'api_service.dart';
 import 'welcome_page.dart';
 import 'history_page.dart';
-import 'settings_page.dart';
+
 
 void main() {
   runApp(const EngageMetricsApp());
@@ -213,15 +213,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const HistoryPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
               );
             },
           ),

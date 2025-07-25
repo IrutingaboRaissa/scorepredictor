@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'prediction_screen.dart';
 import 'history_page.dart';
-import 'settings_page.dart';
 
 // Hunt Green theme only
 const Color huntGreen = Color(0xFF355E3B);
@@ -17,17 +15,7 @@ class WelcomePage extends StatelessWidget {
         title: const Text('EngageMetrics'),
         centerTitle: true,
         backgroundColor: huntGreen,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Container(
         color: Colors.white,
