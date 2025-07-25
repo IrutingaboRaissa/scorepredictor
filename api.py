@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, field_validator
+from pydantic import Field
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 import joblib
@@ -27,7 +28,22 @@ FEATURE_NAMES = [
 N_FEATURES = scaler.mean_.shape[0]
 
 class InputData(BaseModel):
-    features: List[float]
+from pydantic import Field
+
+features: List[float] = Field(
+    ...,
+    description=(
+        "List of features in the following order: "
+        "1. Attendance (%), "
+        "2. Parental Engagement (Low=1, Medium=2, High=3), "
+        "3. Sleep Hours/week, "
+        "4. Previous Grades (0-100), "
+        "5. Hours Studied/week, "
+        "6. Tutoring Sessions/week, "
+        "7. Physical Activity (hours/week)"
+    ),
+    example=[95, 2, 56, 88, 10, 1, 3]
+)
 
     @field_validator('features')
     @classmethod
@@ -54,7 +70,7 @@ def health():
 # Endpoint to get the number of features expected by the model
 @app.get("/n_features")
 def n_features():
-    return {"n_features": N_FEATURES}
+class InputData(BaseModel):
 
 # Root endpoint for friendly message
 @app.get("/")

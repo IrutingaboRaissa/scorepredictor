@@ -136,13 +136,31 @@ The API will be available at `http://127.0.0.1:8000`.
 
 ### 3. Test the Prediction Endpoint
 
-Send a POST request to `/predict` with a JSON body:
+Send a POST request to `/predict` with a JSON body. The features **must be provided in the following order**:
+
+1. Attendance (%)
+2. Parental Engagement (Low=1, Medium=2, High=3)
+3. Sleep Hours/week
+4. Previous Grades (0-100)
+5. Hours Studied/week
+6. Tutoring Sessions/week
+7. Physical Activity (hours/week)
+
+**Example JSON payload:**
 ```
 {
-  "features": [attendance, parental_involvement, sleep_hours, previous_scores, hours_studied, tutoring_sessions, physical_activity]
+  "features": [
+    95,    // Attendance (%)
+    2,     // Parental Engagement (Low=1, Medium=2, High=3)
+    56,    // Sleep Hours/week
+    88,    // Previous Grades (0-100)
+    10,    // Hours Studied/week
+    1,     // Tutoring Sessions/week
+    3      // Physical Activity (hours/week)
+  ]
 }
 ```
-Replace each value with your input. You can use Swagger UI or a tool like Postman.
+Replace each value with your input. You can use Swagger UI or a tool like Postman. Make sure the order matches the list above.
 
 ### 4. Run the Flutter App
 
