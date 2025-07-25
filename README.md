@@ -41,10 +41,10 @@ The model is trained on a dataset of student performance factors, focusing on th
 
 1. Attendance (%)
 2. Parental Engagement (Low=1, Medium=2, High=3)
-3. Sleep Hours
+3. Sleep Hours/week
 4. Previous Grades (0-100)
-5. Hours Studied
-6. Tutoring Sessions
+5. Hours Studied/week
+6. Tutoring Sessions/week
 7. Physical Activity (hours/week)
 
 The notebook includes:
@@ -116,6 +116,48 @@ The API will be available at `http://127.0.0.1:8000`.
 cd engage_metrics_app
 flutter run
 ```
+
+## Step-by-Step: How to Check API and Run the Flutter App
+
+### 1. Start the FastAPI Server
+
+Open a terminal in the project root and run:
+```
+uvicorn api:app --reload
+```
+The API will be available at `http://127.0.0.1:8000`.
+
+### 2. Check if the API is Working
+
+- Open your browser and go to:
+  - `http://127.0.0.1:8000/health` (should return `{ "status": "ok" }`)
+  - `http://127.0.0.1:8000/docs` (Swagger UI for interactive API testing)
+- You can test endpoints like `/predict` directly in Swagger UI.
+
+### 3. Test the Prediction Endpoint
+
+Send a POST request to `/predict` with a JSON body:
+```
+{
+  "features": [attendance, parental_involvement, sleep_hours, previous_scores, hours_studied, tutoring_sessions, physical_activity]
+}
+```
+Replace each value with your input. You can use Swagger UI or a tool like Postman.
+
+### 4. Run the Flutter App
+
+Open a terminal and run:
+```
+cd engage_metrics_app
+flutter pub get
+flutter run
+```
+This will launch the mobile app. Make sure your API is running so the app can connect for predictions.
+
+### 5. Troubleshooting
+- If the API does not start, check for missing model files (`best_model.joblib`, `scaler.joblib`).
+- If you see errors about missing features, ensure your request matches the required order and number of features.
+- For Flutter issues, ensure you have the Flutter SDK installed and dependencies fetched.
 
 ## Deployment
 
