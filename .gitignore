@@ -9,3 +9,6 @@ __pycache__/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+
+# uvicorn api:app --reload

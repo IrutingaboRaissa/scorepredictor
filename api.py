@@ -13,6 +13,16 @@ if not os.path.exists('best_model.joblib') or not os.path.exists('scaler.joblib'
 model = joblib.load('best_model.joblib')
 scaler = joblib.load('scaler.joblib')
 
+# The required order of features for prediction:
+FEATURE_NAMES = [
+    "Attendance",
+    "Parental_Involvement",
+    "Sleep_Hours",
+    "Previous_Scores",
+    "Hours_Studied",
+    "Tutoring_Sessions",
+    "Physical_Activity"
+]
 # Set the number of features (update if needed)
 N_FEATURES = scaler.mean_.shape[0]
 
