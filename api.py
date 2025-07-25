@@ -33,6 +33,7 @@ class InputData(BaseModel):
 
 import logging
 
+
 app = FastAPI()
 
 # Health check endpoint
