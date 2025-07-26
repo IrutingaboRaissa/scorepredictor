@@ -67,7 +67,7 @@ class InputData(BaseModel):
             raise ValueError("Input validation errors:\n" + "\n".join(errors))
 
 # --- FastAPI App ---
-app = FastAPI()
+app = FastAPI(title="EngageMetrics Prediction API", version="1.0.0")
 
 # --- CORS ---
 app.add_middleware(
