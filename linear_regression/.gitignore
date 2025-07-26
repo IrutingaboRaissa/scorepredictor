@@ -11,4 +11,4 @@ __pycache__/
 .ipynb_checkpoints/
 
 
-# uvicorn api:app --reload
+# uvicorn linear_regression.api:app --reload
