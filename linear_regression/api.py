@@ -1,13 +1,11 @@
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import numpy as np
 import os
 import logging
-app = FastAPI()
 
 # --- Load Model, Scaler, Imputer ---
 MODEL_PATH = 'best_model.joblib'
@@ -30,7 +28,7 @@ FEATURE_NAMES = [
     "Tutoring_Sessions",
     "Physical_Activity"
 ]
-N_FEATURES = len(FEATURE_NAMES)
+
 
 # --- Input Model ---
 class InputData(BaseModel):
@@ -79,16 +77,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# --- Health Check ---
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
-# --- Feature Count Endpoint ---
-@app.get("/n_features")
-def n_features():
-    return {"n_features": N_FEATURES}
 
 # --- Root Endpoint ---
 @app.get("/")
