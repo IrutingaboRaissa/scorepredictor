@@ -7,6 +7,7 @@ import joblib
 import numpy as np
 import os
 import logging
+app = FastAPI()
 
 # --- Load Model, Scaler, Imputer ---
 MODEL_PATH = 'best_model.joblib'
