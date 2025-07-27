@@ -109,9 +109,9 @@ The best-performing model was selected based on:
 ## Technical Implementation
 
 ### API Deployment
-**Production API:** [Your Render URL here]  
-**Interactive Documentation:** [Your Render URL here]/docs  
-**Health Check:** [Your Render URL here]/
+**Production API:** https://scorepredictor-b45k.onrender.com  
+**Interactive Documentation:** https://scorepredictor-b45k.onrender.com/docs  
+**Health Check:** https://scorepredictor-b45k.onrender.com/
 
 #### API Features
 - **FastAPI Framework**: High-performance, modern Python API
