@@ -79,10 +79,15 @@ Future<double?> _tryPrediction(String baseUrl, List<double> features) async {
     print('Attempting prediction with URL: $url');
     print('Sending features: $features');
     
+    // Use features array format for deployed API
+    final requestBody = {
+      'features': features
+    };
+    
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'features': features}),
+      body: jsonEncode(requestBody),
     ).timeout(const Duration(seconds: 10));
     
     print('Response status: ${response.statusCode}');
