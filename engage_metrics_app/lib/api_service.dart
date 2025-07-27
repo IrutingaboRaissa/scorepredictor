@@ -24,7 +24,7 @@ Future<List<Map<String, dynamic>>> loadPredictionHistory() async {
 
 // Default API URLs
 const String localApiUrl = 'http://127.0.0.1:8000';
-const String deployedApiUrl = 'https://your-service-name.onrender.com'; // Update this when deployed
+const String deployedApiUrl = 'https://scorepredictor-api.onrender.com'; // Update this with your actual Render URL
 
 // Get the base API URL (can be switched between local and deployed)
 Future<String> getApiBaseUrl() async {
@@ -82,7 +82,15 @@ Future<double?> _tryPrediction(String baseUrl, List<double> features) async {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'features': features}),
+      body: jsonEncode({
+        'attendance': features[0],
+        'parental_involvement': features[1].toInt(),
+        'sleep_hours': features[2],
+        'previous_scores': features[3],
+        'hours_studied': features[4],
+        'tutoring_sessions': features[5].toInt(),
+        'physical_activity': features[6]
+      }),
     ).timeout(const Duration(seconds: 10));
     
     print('Response status: ${response.statusCode}');

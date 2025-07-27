@@ -1,75 +1,20 @@
-
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import joblib
 import numpy as np
-import os
 import logging
 
-# --- Load Model, Scaler, Imputer ---
-MODEL_PATH = 'best_model.joblib'
-SCALER_PATH = 'scaler.joblib'
-IMPUTER_PATH = 'imputer.joblib'
+# Load models
+try:
+    model = joblib.load('best_model.joblib')
+    scaler = joblib.load('scaler.joblib')
+    imputer = joblib.load('imputer.joblib')
+except Exception as e:
+    raise RuntimeError(f"Failed to load models: {e}")
 
-if not os.path.exists(MODEL_PATH) or not os.path.exists(SCALER_PATH) or not os.path.exists(IMPUTER_PATH):
-    raise FileNotFoundError("Required model/scaler/imputer files not found. Please run your notebook and save them using joblib.dump().")
-model = joblib.load(MODEL_PATH)
-scaler = joblib.load(SCALER_PATH)
-imputer = joblib.load(IMPUTER_PATH)
+app = FastAPI(title="Student Score Predictor API")
 
-# --- Feature Names ---
-FEATURE_NAMES = [
-    "Attendance",
-    "Parental_Involvement",
-    "Sleep_Hours",
-    "Previous_Scores",
-    "Hours_Studied",
-    "Tutoring_Sessions",
-    "Physical_Activity"
-]
-
-
-# --- Input Model ---
-class InputData(BaseModel):
-    attendance: float = Field(..., description="Attendance (%)", example=95)
-    parental_involvement: int = Field(..., description="Parental Engagement (Low=1, Medium=2, High=3)", example=2)
-    sleep_hours: float = Field(..., description="Sleep Hours/week", example=56)
-    previous_grades: float = Field(..., description="Previous Grades (0-100)", example=88)
-    hours_studied: float = Field(..., description="Hours Studied/week", example=10)
-    tutoring_sessions: int = Field(..., description="Tutoring Sessions/week", example=1)
-    physical_activity: float = Field(..., description="Physical Activity (hours/week)", example=3)
-
-    def validate_values(self):
-        errors = []
-        # Attendance: 0-100
-        if not (0 <= self.attendance <= 100):
-            errors.append(f"Attendance must be between 0 and 100. Got {self.attendance}")
-        # Parental Involvement: 1, 2, or 3
-        if self.parental_involvement not in [1, 2, 3]:
-            errors.append(f"Parental Involvement must be 1 (Low), 2 (Medium), or 3 (High). Got {self.parental_involvement}")
-        # Sleep Hours: 30-65
-        if not (30 <= self.sleep_hours <= 65):
-            errors.append(f"Sleep Hours must be between 30 and 65. Got {self.sleep_hours}")
-        # Previous Grades: 0-100
-        if not (0 <= self.previous_grades <= 100):
-            errors.append(f"Previous Grades must be between 0 and 100. Got {self.previous_grades}")
-        # Hours Studied: 0-50
-        if not (0 <= self.hours_studied <= 50):
-            errors.append(f"Hours Studied must be between 0 and 50. Got {self.hours_studied}")
-        # Tutoring Sessions: 0-7
-        if not (0 <= self.tutoring_sessions <= 7):
-            errors.append(f"Tutoring Sessions must be between 0 and 7. Got {self.tutoring_sessions}")
-        # Physical Activity: 0-14
-        if not (0 <= self.physical_activity <= 14):
-            errors.append(f"Physical Activity must be between 0 and 14. Got {self.physical_activity}")
-        if errors:
-            raise ValueError("Input validation errors:\n" + "\n".join(errors))
-
-# --- FastAPI App ---
-app = FastAPI(title="EngageMetrics Prediction API", version="1.0.0")
-
-# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -78,39 +23,65 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Root Endpoint ---
+class PredictionRequest(BaseModel):
+    attendance: float = 95.0  # Attendance percentage (0-100)
+    parental_involvement: int = 2  # Parental engagement (1=Low, 2=Medium, 3=High)
+    sleep_hours: float = 7.0  # Sleep hours per day (4-10)
+    previous_scores: float = 88.0  # Previous academic scores (0-100)
+    hours_studied: float = 10.0  # Study hours per week (0-50)
+    tutoring_sessions: int = 1  # Tutoring sessions per week (0-8)
+    physical_activity: float = 3.0  # Physical activity hours per week (0-6)
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "attendance": 95.0,
+                "parental_involvement": 2,
+                "sleep_hours": 7.0,
+                "previous_scores": 88.0,
+                "hours_studied": 10.0,
+                "tutoring_sessions": 1,
+                "physical_activity": 3.0
+            }
+        }
+
 @app.get("/")
 def root():
-    return {"message": "Welcome to the EngageMetrics Prediction API. Use the /predict endpoint to get predictions."}
+    return {"message": "Student Score Predictor API is running"}
 
-# --- Prediction Endpoint ---
 @app.post("/predict")
-def predict(data: InputData):
+def predict(request: PredictionRequest):
+    """
+    Predict student exam score based on performance factors
+    """
     try:
-        data.validate_values()
-    except ValueError as ve:
-        logging.warning(f"Validation error: {str(ve)}")
-        return {"error": str(ve), "type": "validation"}
-    except Exception as e:
-        logging.error(f"Unexpected error: {str(e)}")
-        return {"error": "Unexpected error during validation.", "details": str(e), "type": "internal"}
-
-    try:
+        # Extract features from request
         features = [
-            data.attendance,
-            data.parental_involvement,
-            data.sleep_hours,
-            data.previous_grades,
-            data.hours_studied,
-            data.tutoring_sessions,
-            data.physical_activity
+            request.attendance,
+            request.parental_involvement,
+            request.sleep_hours,
+            request.previous_scores,
+            request.hours_studied,
+            request.tutoring_sessions,
+            request.physical_activity
         ]
-        arr = np.array(features).reshape(1, -1)
-        arr_imputed = imputer.transform(arr)
-        arr_scaled = scaler.transform(arr_imputed)
-        pred = model.predict(arr_scaled)
-        logging.info(f"Prediction result: {pred[0]}")
-        return {"prediction": float(pred[0])}
+        
+        # Convert to numpy array
+        features_array = np.array([features])
+        
+        # Process through pipeline
+        features_imputed = imputer.transform(features_array)
+        features_scaled = scaler.transform(features_imputed)
+        
+        # Make prediction
+        prediction = model.predict(features_scaled)[0]
+        
+        # Ensure realistic range
+        prediction = max(55, min(101, prediction))
+        prediction = round(prediction, 1)
+        
+        return {"prediction": float(prediction)}
+        
     except Exception as e:
-        logging.error(f"Prediction error: {str(e)}")
-        return {"error": "Prediction failed due to server error.", "details": str(e), "type": "internal"}
+        logging.error(f"Prediction error: {e}")
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
