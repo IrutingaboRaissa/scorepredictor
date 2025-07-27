@@ -1,4 +1,4 @@
-# 🎓 Student Performance Score Predictor
+# Student Performance Score Predictor
 *Empowering Education Through Predictive Analytics*
 
 ## Mission Statement
@@ -10,18 +10,10 @@ In today's educational landscape, identifying at-risk students early is crucial 
 ### Problem Statement
 Educators often struggle to identify which students need additional support until after poor performance has already occurred. Traditional assessment methods are reactive rather than proactive, missing opportunities for timely intervention.
 
-### Solution
-Our machine learning solution analyzes multiple behavioral and academic factors to predict student exam scores, enabling:
-- **Early identification** of at-risk students
-- **Proactive intervention** strategies
-- **Personalized learning** recommendations
-- **Resource allocation** optimization
-- **Improved educational outcomes** for all students
-
 ### Target Users
 - **Educators**: Teachers and professors seeking to identify struggling students
 - **Academic Advisors**: Counselors providing targeted student support
-- **Educational Administrators**: Decision-makers optimizing resource allocation
+- **Policy makers**: Decision-makers optimizing resource allocation
 - **Students**: Individuals seeking to understand factors affecting their performance
 
 ## Dataset Description and Source
@@ -33,27 +25,10 @@ Our machine learning solution analyzes multiple behavioral and academic factors 
 - **Scope:** Multi-dimensional performance factors
 - **Quality:** Clean, structured educational data
 
-### Feature Categories
-**Academic Factors:**
-- Hours_Studied: Weekly study time investment
-- Previous_Scores: Historical academic performance
-- Tutoring_Sessions: Additional learning support frequency
-
-**Behavioral Factors:**
-- Attendance: Class participation consistency
-- Sleep_Hours: Daily rest and recovery patterns
-- Physical_Activity: Health and wellness engagement
-
-**Social Factors:**
-- Parental_Involvement: Family support system strength
-
-**Target Variable:**
-- Exam_Score: Final performance outcome (55-101 range)
-
 ### Educational Relevance
-This dataset captures the holistic nature of student success, recognizing that academic achievement is influenced by study habits, health, family support, and behavioral patterns - not just raw intelligence.
+This dataset captures the holistic nature of student success, recognizing that academic achievement is influenced by study habits, health, family support, and behavioral patterns not just raw intelligence.
 
-## Data Analysis and Insights
+## Data Insights
 
 ### Correlation Analysis
 Understanding relationships between student factors and academic performance:
@@ -74,7 +49,6 @@ Comparative analysis of machine learning algorithms:
 **Performance Metrics:**
 - Model accuracy comparison
 - Training vs validation performance
-- Computational efficiency analysis
 
 ### Prediction Accuracy Visualization
 Model reliability assessment through actual vs predicted comparison:
@@ -102,8 +76,7 @@ Model reliability assessment through actual vs predicted comparison:
 ### Model Performance
 The best-performing model was selected based on:
 - Lowest prediction error (RMSE/MAE)
-- Cross-validation scores
-- Generalization capability
+- Cross-validation score
 - Computational efficiency
 
 ## Technical Implementation
@@ -126,8 +99,8 @@ The best-performing model was selected based on:
 - Daily sleep hours (4-10)
 - Previous academic scores (0-100)
 - Weekly study hours (0-50)
-- Tutoring sessions per week (0-8)
-- Physical activity hours (0-6)
+- Tutoring sessions per week (0-7)
+- Physical activity hours (0-8)
 
 ### Mobile Application
 **Flutter Cross-Platform App** with intuitive prediction interface
@@ -138,7 +111,7 @@ The best-performing model was selected based on:
 - **Prediction Display**: Clear score presentation
 - **History Tracking**: Previous prediction storage
 - **Error Handling**: User-friendly error messages
-- **Responsive Design**: Works on phones and tablets
+- **Responsive Design**
 
 ## Getting Started
 
