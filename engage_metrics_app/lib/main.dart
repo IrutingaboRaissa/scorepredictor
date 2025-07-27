@@ -23,7 +23,7 @@ class EngageMetricsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EngageMetrics Predictor',
+      title: 'EngageMetrics  Score Predictor',
       theme: ThemeData(
         primarySwatch: primaryBrown,
         scaffoldBackgroundColor: backgroundCream,
@@ -115,8 +115,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
       return;
     }
     
-    // Check for reasonable ranges
-    // We've already checked for nulls, but we need to cast to non-nullable for Dart's null safety
+
     final List<double> validInputs = input.whereType<double>().toList();
     
     if (validInputs.length != input.length) {

@@ -22,14 +22,14 @@ Future<List<Map<String, dynamic>>> loadPredictionHistory() async {
   return historyJson.map((item) => jsonDecode(item) as Map<String, dynamic>).toList();
 }
 
-// Default API URLs
+//  API URLs
 const String localApiUrl = 'http://127.0.0.1:8000';
 const String deployedApiUrl = 'https://scorepredictor-b45k.onrender.com';
 
-// Get the base API URL (can be switched between local and deployed)
+
 Future<String> getApiBaseUrl() async {
   final prefs = await SharedPreferences.getInstance();
-  // Default to local for development, can be changed in settings
+
   return prefs.getString('api_base_url') ?? localApiUrl;
 }
 
