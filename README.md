@@ -15,15 +15,32 @@ Predict student exam scores based on multiple behavioral and academic factors to
   - Social factors (Parental_Involvement)
   - Target variable: Exam_Score (55-101 range)
 
-## API Deployment
-**Live API:** [Your Render URL here]/docs  
-**Swagger Documentation:** [Your Render URL here]/docs
+## Data Visualizations
 
-## Mobile App
-Flutter mobile application with prediction interface connecting to the deployed API.
+### Correlation Heatmap
+Shows relationships between different features and exam scores:
+
+![Correlation Heatmap](linear_regression/heatmap.png.png)
+
+### Model Performance Comparison
+Comparison of different machine learning models:
+
+![Model Comparison](linear_regression/models.png.png)
+
+### Actual vs Predicted Values
+Scatter plot showing model prediction accuracy:
+
+![Actual vs Predicted](linear_regression/actual_predictedvalues.png.png)
 
 ## Models Implemented
 - Linear Regression
 - Random Forest Regressor  
 - Decision Tree Regressor
 - Best model saved based on lowest loss metrics
+
+## API Deployment
+**Live API:** [Your Render URL here]/docs  
+**Swagger Documentation:** [Your Render URL here]/docs
+
+## Mobile App
+Flutter mobile application with prediction interface connecting to the deployed API.
