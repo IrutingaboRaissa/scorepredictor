@@ -229,8 +229,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       final record = _history[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                          horizontal: 14,
+                          vertical: 7,
                         ),
                         elevation: 3,
                         shape: RoundedRectangleBorder(
